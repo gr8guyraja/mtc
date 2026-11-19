@@ -792,11 +792,10 @@ function drawTrioLogistics(y){
   const items=[
     ['DATE',state.date,'calendar'],
     ['TIME',state.time,'clock'],
-    ['MEMBERSHIP FACILITATION / CONTACT',state.contact,'contact'],
     ['VENUE',state.venue,'pin']
   ];
-  const w=(W-2*108-3*18)/4;
-  items.forEach((it,i)=>pill(ctx,108+i*(w+18),y,w,90,it[0],it[1],it[2],i===2?C.maroon:C.blue,C.white));
+  const w=(W-2*108-2*18)/3;
+  items.forEach((it,i)=>pill(ctx,108+i*(w+18),y,w,90,it[0],it[1],it[2],C.blue,C.white));
 }
 function drawTrioCard(s,x,y,w,h,index){
   const border=s.color||C.maroon;
