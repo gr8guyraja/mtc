@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#772432">
+<meta name="description" content="Create 1536 × 1536 Toastmasters club flyers right on your phone.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TM Flyer Studio">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Toastmasters Club Flyer Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -444,6 +452,14 @@ function toast(msg){
 function syncAppLogo(){
   const el=document.getElementById('appLogo');
   if(el) el.src=state.logo||BUILTIN_LOGO;
+}
+function isNativeApp(){ return !!(window.AndroidFlyer && window.AndroidFlyer.savePng); }
+function saveFlyerPng(dataUrl, filename){
+  if(!isNativeApp()) return false;
+  try{
+    window.AndroidFlyer.savePng(String(dataUrl).split(',')[1]||'', filename);
+    return true;
+  }catch(e){ return false; }
 }
 function scheduleSave(){
   clearTimeout(saveTimer);
@@ -1353,11 +1369,16 @@ document.addEventListener('click', async e=>{
     try{
       if(document.fonts && document.fonts.ready) await document.fonts.ready;
       render();
-      const link=document.createElement('a');
-      link.download=state.mode+'-flyer-1536.png';
-      link.href=canvas.toDataURL('image/png');
-      document.body.appendChild(link); link.click(); link.remove();
-      toast('PNG downloaded (1536 × 1536).');
+      const dataUrl=canvas.toDataURL('image/png');
+      if(saveFlyerPng(dataUrl, state.mode+'-flyer-1536.png')){
+        toast('PNG saved to your Photos / gallery.');
+      }else{
+        const link=document.createElement('a');
+        link.download=state.mode+'-flyer-1536.png';
+        link.href=dataUrl;
+        document.body.appendChild(link); link.click(); link.remove();
+        toast('PNG downloaded (1536 × 1536).');
+      }
     }catch(err){ toast('Download failed — try uploading photos directly instead of using URLs.'); }
   }
 });
@@ -1430,6 +1451,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
       document.fonts.load('400 28px "Source Sans 3"'),
       document.fonts.load('700 28px "Source Sans 3"')
     ]).then(()=>render()).catch(()=>{});
+  }
+  // PWA: enable offline use when hosted over HTTPS. WebView apps use the
+  // bundled assets directly and do not register a service worker.
+  const secureHost=location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  if('serviceWorker' in navigator && secureHost && !isNativeApp()){
+    window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
   }
 });
 </script>

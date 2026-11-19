@@ -1,0 +1,33 @@
+{
+  "name": "Toastmasters Club Flyer Studio",
+  "short_name": "TM Flyer Studio",
+  "description": "Create 1536 × 1536 Toastmasters club flyers right on your phone.",
+  "id": "/mtc/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F5F5",
+  "theme_color": "#772432",
+  "categories": ["productivity", "photo"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
