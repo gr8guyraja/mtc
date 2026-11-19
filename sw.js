@@ -1,5 +1,5 @@
 /* Toastmasters Club Flyer Studio - offline app shell */
-const CACHE = 'tm-flyer-studio-v1';
+const CACHE = 'tm-flyer-studio-v2';
 const SHELL = [
   './',
   './index.html',
