@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#772432">
+<title>Toastmasters Club Flyer Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon:#772432;
+    --deep:#3B0104;
+    --blue:#004165;
+    --blue-deep:#002E48;
+    --gold:#F2DF74;
+    --gray:#A9B2B1;
+    --cream:#F5F5F5;
+    --ink:#241417;
+    --line:#e3ded1;
+    --shadow:0 6px 22px rgba(59,1,4,.18);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Source Sans 3',Arial,sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    padding-bottom:84px;
+  }
+  button,input,textarea,select{font-family:inherit;}
+  button{cursor:pointer;}
+
+  /* ---------- App bar ---------- */
+  .appbar{
+    position:sticky;top:0;z-index:30;
+    display:flex;align-items:center;gap:8px;
+    padding:10px 16px calc(10px + env(safe-area-inset-top,0px));
+    background:linear-gradient(120deg,var(--deep),var(--maroon));
+    color:#fff;
+    box-shadow:0 4px 16px rgba(0,0,0,.22);
+  }
+  .appbar .mark{
+    width:auto;height:42px;max-width:88px;flex:0 0 auto;
+    display:block;object-fit:contain;
+    background:transparent;border:0;border-radius:0;
+  }
+  .appbar h1{font-family:Montserrat,sans-serif;font-size:1rem;line-height:1.1;margin:0;font-weight:800;letter-spacing:.2px;}
+  .appbar p{margin:2px 0 0;font-size:.7rem;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;}
+  .appbar .spacer{flex:1;}
+  .top-download{
+    display:none;border:1px solid var(--gold);background:transparent;color:var(--gold);
+    border-radius:8px;padding:9px 14px;font-weight:700;font-size:.82rem;
+  }
+  .top-download:hover{background:var(--gold);color:var(--deep);}
+
+  /* ---------- Mode tabs ---------- */
+  .modes{
+    display:flex;gap:8px;overflow-x:auto;padding:12px 16px 4px;
+    scrollbar-width:none;scroll-snap-type:x proximity;
+  }
+  .modes::-webkit-scrollbar{display:none;}
+  .mode-tab{
+    flex:0 0 auto;scroll-snap-align:start;
+    border:1px solid var(--line);background:#fff;color:#6b5c5c;
+    border-radius:999px;padding:9px 14px;font-size:.82rem;font-weight:700;
+    white-space:nowrap;transition:.15s ease;
+  }
+  .mode-tab.active{background:var(--maroon);border-color:var(--maroon);color:#fff;box-shadow:0 3px 10px rgba(119,36,50,.28);}
+
+  /* ---------- Layout ---------- */
+  .app-grid{display:grid;grid-template-columns:1fr;gap:18px;padding:14px 16px 24px;max-width:1500px;margin:0 auto;}
+  @media(min-width:980px){
+    .app-grid{grid-template-columns:minmax(360px,430px) minmax(0,1fr);gap:26px;align-items:start;}
+    .top-download{display:block;}
+    body{padding-bottom:24px;}
+    .preview-col{position:sticky;top:76px;}
+  }
+
+  /* ---------- Editor ---------- */
+  .editor{display:flex;flex-direction:column;gap:12px;}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 2px 8px rgba(59,1,4,.05);overflow:hidden;
+  }
+  .card > summary{
+    list-style:none;cursor:pointer;padding:14px 16px;
+    display:flex;align-items:center;gap:10px;
+    font-family:Montserrat,sans-serif;font-weight:800;font-size:.82rem;
+    letter-spacing:.04em;text-transform:uppercase;color:var(--deep);
+    background:linear-gradient(90deg,#fff,#fbf9f4);
+  }
+  .card > summary::-webkit-details-marker{display:none;}
+  .card > summary::after{content:'+';margin-left:auto;font-size:1.1rem;color:var(--maroon);}
+  .card[open] > summary::after{content:'−';}
+  .card > summary .num{
+    width:24px;height:24px;border-radius:6px;background:var(--maroon);color:#fff;
+    display:grid;place-items:center;font-size:.72rem;
+  }
+  .card-body{padding:4px 16px 16px;}
+  .field{margin-top:14px;}
+  .field:first-child{margin-top:10px;}
+  label,.lbl{
+    display:block;font-size:.7rem;font-weight:700;letter-spacing:.07em;
+    text-transform:uppercase;color:#8a7770;margin-bottom:6px;
+  }
+  input[type=text],input[type=number],textarea,select{
+    width:100%;font-size:16px;padding:10px 11px;line-height:1.35;
+    border:1px solid #d8d0c0;border-radius:8px;background:#fff;color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:66px;}
+  input:focus,textarea:focus,select:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:var(--blue);}
+  .hint{font-size:.72rem;color:#9b8f88;margin-top:5px;line-height:1.35;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .segmented{display:flex;gap:6px;background:#f4f1ea;padding:4px;border-radius:9px;}
+  .segmented button{
+    flex:1;border:0;background:transparent;border-radius:7px;padding:8px 6px;
+    font-size:.78rem;font-weight:700;color:#7a6f68;
+  }
+  .segmented button.active{background:#fff;color:var(--maroon);box-shadow:0 2px 6px rgba(0,0,0,.1);}
+  .swatches{display:flex;gap:8px;flex-wrap:wrap;}
+  .swatch{
+    width:34px;height:34px;border-radius:50%;border:3px solid #fff;
+    box-shadow:0 0 0 1px #d8d0c0;
+  }
+  .swatch.active{box-shadow:0 0 0 2px var(--ink);}
+
+  .btn{
+    border:1px solid var(--line);background:#fff;color:var(--deep);
+    border-radius:8px;padding:9px 11px;font-size:.78rem;font-weight:700;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .btn:hover{background:#faf7f0;}
+  .btn.primary{background:var(--maroon);border-color:var(--maroon);color:#fff;}
+  .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .btn.gold{background:var(--gold);border-color:var(--gold);color:var(--deep);}
+  .btn.danger{background:#fff1f0;border-color:#f0c7c2;color:#a3261c;}
+  .btn.tiny{padding:6px 9px;font-size:.72rem;}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .btn-row .btn{flex:1 1 auto;}
+
+  .slot{border:1px solid var(--line);border-radius:10px;margin-top:12px;overflow:hidden;background:#fff;}
+  .slot > summary{
+    list-style:none;cursor:pointer;padding:11px 12px;
+    display:flex;align-items:center;gap:10px;font-size:.8rem;font-weight:700;
+    background:#fbf9f4;color:var(--deep);
+  }
+  .slot > summary::-webkit-details-marker{display:none;}
+  .slot > summary .dot{width:10px;height:10px;border-radius:50%;flex:0 0 10px;box-shadow:0 0 0 2px #fff,0 0 0 3px #e0d8c8;}
+  .slot > summary small{margin-left:auto;color:#9b8f88;font-weight:600;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .slot-body{padding:2px 12px 12px;}
+  .photo-thumbs{display:flex;align-items:center;gap:10px;margin-top:12px;}
+  .photo-thumbs .thumb{
+    width:52px;height:52px;flex:0 0 52px;border-radius:9px;object-fit:cover;
+    background:#eee8dc;border:1px solid #ddd4c4;display:grid;place-items:center;
+    font-family:Montserrat,sans-serif;font-weight:800;color:var(--maroon);font-size:.9rem;overflow:hidden;
+  }
+  .photo-thumbs .thumb img{width:100%;height:100%;object-fit:cover;}
+
+  .dir-add{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end;}
+  .dir-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px;margin-top:12px;}
+  .dir-item{
+    position:relative;border:1px solid var(--line);border-radius:9px;padding:8px;
+    display:flex;align-items:center;gap:8px;background:#fff;min-width:0;
+  }
+  .dir-item .av{width:38px;height:38px;flex:0 0 38px;border-radius:50%;object-fit:cover;background:#eee8dc;display:grid;place-items:center;font-weight:800;color:var(--maroon);font-size:.75rem;overflow:hidden;}
+  .dir-item .av img{width:100%;height:100%;object-fit:cover;}
+  .dir-item .nm{font-size:.75rem;font-weight:700;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .dir-item .del{
+    position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;
+    border:1px solid #e7c4c0;background:#fff;color:#a3261c;font-size:.75rem;line-height:1;padding:0;
+  }
+  .dir-item.pickable{cursor:pointer;transition:.15s;}
+  .dir-item.pickable:hover{border-color:var(--gold);background:#fffdf5;}
+
+  /* ---------- Preview ---------- */
+  .preview-col{display:flex;flex-direction:column;align-items:center;gap:12px;}
+  .preview-card{
+    width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:12px;box-shadow:var(--shadow);
+  }
+  .preview-head{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    margin-bottom:10px;font-size:.74rem;color:#8a7770;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  }
+  .preview-head span:last-child{color:var(--maroon);}
+  canvas#flyerCanvas{
+    display:block;width:100%;height:auto;aspect-ratio:1/1;border-radius:6px;
+    background:var(--cream);box-shadow:0 4px 16px rgba(0,0,0,.12);
+  }
+  .preview-note{font-size:.75rem;color:#9b8f88;text-align:center;line-height:1.4;}
+  .desktop-download{display:none;width:100%;}
+
+  /* ---------- Sticky mobile download ---------- */
+  .mobile-bar{
+    position:fixed;left:0;right:0;bottom:0;z-index:35;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+    background:#fff;border-top:1px solid var(--line);
+    box-shadow:0 -4px 18px rgba(59,1,4,.12);
+  }
+  .mobile-bar button{
+    width:100%;border:0;border-radius:10px;background:var(--maroon);color:#fff;
+    padding:14px;font-family:Montserrat,sans-serif;font-weight:800;font-size:.9rem;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .mobile-bar button:active{background:var(--deep);}
+  @media(min-width:980px){.mobile-bar{display:none;}.desktop-download{display:block;}}
+
+  /* ---------- Modal ---------- */
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(24,8,12,.62);display:flex;align-items:flex-end;justify-content:center;}
+  .modal.hidden{display:none;}
+  .modal-card{
+    background:#fff;width:100%;max-width:620px;max-height:94vh;overflow:auto;
+    border-radius:16px 16px 0 0;padding:16px;
+  }
+  @media(min-width:700px){.modal{align-items:center;}.modal-card{border-radius:16px;max-height:90vh;}}
+  .modal-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .modal-head h2{font-family:Montserrat,sans-serif;font-size:1rem;color:var(--deep);margin:0;}
+  .modal-head button{margin-left:auto;border:0;background:#f3efe7;border-radius:50%;width:30px;height:30px;font-size:1rem;}
+  #cropCanvas{width:100%;max-width:420px;height:auto;aspect-ratio:1/1;display:block;margin:0 auto 10px;border-radius:10px;background:#eee8dc;touch-action:none;cursor:grab;}
+  .range-row{margin-top:10px;}
+  .range-row .lbl{display:flex;justify-content:space-between;}
+  input[type=range]{width:100%;accent-color:var(--maroon);}
+  .crop-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+  .crop-actions .btn{flex:1 1 30%;}
+  .picker-title{margin:16px 0 8px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#8a7770;}
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:100px;transform:translate(-50%,20px);
+    background:var(--deep);color:#fff;padding:10px 16px;border-radius:999px;
+    font-size:.8rem;font-weight:600;z-index:200;opacity:0;pointer-events:none;transition:.25s ease;
+    box-shadow:0 6px 20px rgba(0,0,0,.28);max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0);}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <img class="mark" id="appLogo" alt="Toastmasters International" src="">
+  <div>
+    <h1>Club Flyer Studio</h1>
+    <p>Madras Toastmasters Club</p>
+  </div>
+  <div class="spacer"></div>
+  <button class="top-download" data-action="download">↓ Download PNG</button>
+</header>
+
+<nav class="modes" id="modeTabs" aria-label="Flyer mode"></nav>
+
+<div class="app-grid">
+
+  <aside class="editor">
+    <details class="card" open id="sharedCard">
+      <summary><span class="num">1</span> Club &amp; Meeting Details</summary>
+      <div class="card-body" id="sharedFields"></div>
+    </details>
+
+    <details class="card" open id="modeCard">
+      <summary><span class="num">2</span> <span id="modeCardTitle">Mode Details</span></summary>
+      <div class="card-body" id="modeFields"></div>
+    </details>
+
+    <details class="card" id="directoryCard">
+      <summary><span class="num">3</span> Saved Member Directory</summary>
+      <div class="card-body" id="directoryBody"></div>
+    </details>
+  </aside>
+
+  <main class="preview-col">
+    <div class="preview-card">
+      <div class="preview-head">
+        <span>Live Preview</span>
+        <span id="modeLabel">Trio Spotlight</span>
+      </div>
+      <canvas id="flyerCanvas" width="1536" height="1536" aria-label="Flyer preview"></canvas>
+      <p class="preview-note">Exports at full 1536 × 1536 PNG. Your details and saved members are stored on this device.</p>
+      <button class="btn primary desktop-download" data-action="download">↓ Download Flyer (PNG · 1536px)</button>
+    </div>
+  </main>
+</div>
+
+<div class="mobile-bar">
+  <button data-action="download">↓ Download Flyer · 1536 × 1536</button>
+</div>
+
+<div class="modal hidden" id="cropModal" role="dialog" aria-modal="true" aria-label="Crop photo">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>Crop &amp; Position Photo</h2>
+      <button data-action="cropClose" aria-label="Close">×</button>
+    </div>
+    <canvas id="cropCanvas" width="600" height="600"></canvas>
+    <input type="file" id="cropUpload" accept="image/png,image/jpeg" data-photo-path="__draft">
+    <div class="range-row">
+      <span class="lbl">Zoom <b id="zoomVal">100%</b></span>
+      <input type="range" id="cropZoom" min="100" max="300" value="100">
+    </div>
+    <div class="grid2">
+      <div class="range-row">
+        <span class="lbl">Left / Right <b id="xVal">0</b></span>
+        <input type="range" id="cropX" min="-50" max="50" value="0">
+      </div>
+      <div class="range-row">
+        <span class="lbl">Up / Down <b id="yVal">0</b></span>
+        <input type="range" id="cropY" min="-50" max="50" value="0">
+      </div>
+    </div>
+    <div class="crop-actions">
+      <button class="btn" data-action="cropFit" data-fit="cover">Fill Frame</button>
+      <button class="btn" data-action="cropFit" data-fit="fit">Fit Whole</button>
+      <button class="btn" data-action="cropReset">Reset</button>
+      <button class="btn blue" data-action="cropSaveDir">Save to Directory</button>
+      <button class="btn gold" data-action="cropDone">Use This Photo</button>
+    </div>
+    <p class="picker-title">Or pick a saved member</p>
+    <div class="dir-list" id="cropPicker"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   Toastmasters Club Flyer Studio
+   Self-contained canvas flyer generator. All data stays in localStorage.
+   ============================================================ */
+
+const STORAGE_KEY = 'tm-flyer-studio-v1';
+const OLD_CONTACT = 'To Join Please Contact: VPM TM Anand J +91 98410 43746 | Guest Fee: INR 100';
+const W = 1536, H = 1536;
+
+const BUILTIN_LOGO = "data:image/png;base64,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";
+
+const C = {
+  maroon:'#772432', deep:'#3B0104', blue:'#004165', blueDeep:'#002E48',
+  gold:'#F2DF74', gray:'#A9B2B1', cream:'#F5F5F5', ink:'#241417', white:'#FFFFFF'
+};
+const FH = 'Montserrat, Arial, sans-serif';
+const FB = '"Source Sans 3", Arial, sans-serif';
+
+const MODES = [
+  {id:'trio',       label:'Trio Spotlight'},
+  {id:'roles',      label:'All Role Players'},
+  {id:'new_member', label:'New Member'},
+  {id:'birthday',   label:'Birthday'},
+  {id:'group',      label:'Group Photo'},
+  {id:'tmod',       label:'TMOD'},
+  {id:'event',      label:'Event'}
+];
+
+function slot(name, role, color){
+  return {name:name||'', role:role||'', photo:null, crop:{zoom:1,x:0,y:0,fit:'cover'}, color:color||C.maroon};
+}
+function freshCrop(){ return {zoom:1,x:0,y:0,fit:'cover'}; }
+
+function defaults(){
+  return {
+    mode:'trio', theme:'maroon',
+    clubName:'MADRAS TOASTMASTERS CLUB',
+    areaLine:'AREA C4 | DIVISION C | DISTRICT 229',
+    meetingTag:'MEETING #837 (ICE BREAKER MARATHON)',
+    date:'SUNDAY, 28TH MAY 2026',
+    time:'10.15 AM - 12.30 PM',
+    venue:'Andhra chamber of commerce, CIT Nagar, NANDANAM, CHENNAI-35',
+    contact:'Membership Facilitator: TM Ponnalagu (VPM) | +91 8807060008',
+    contactVersion:2,
+    themeOfDay:'WEAR YOUR HEART ON YOUR SLEEVE',
+    wordOfDay:'VULNERABLE',
+    calloutLine:'SPECIAL EVENT / OUTDOOR VENUE',
+    logisticsPlacement:'top',
+    logo:BUILTIN_LOGO, logoVersion:2,
+    photo:null, photoCrop:freshCrop(),
+    personName:'TM VIGNESH',
+    message:'To build confidence, conquer stage fear, and inspire others through impactful leadership and authentic storytelling.',
+    footerLine:"LET'S GROW TOGETHER!!",
+    hashtag:'#WelcomeAboard',
+    eventTitle:'HUMOROUS & EVALUATION SPEECH CONTEST',
+    eventSubtitle:'SPEECH CONTEST',
+    speakerName:'TM THAMOTHARAN',
+    speakerTitle:'CHIEF JUDGE',
+    trio:[
+      slot('TM PONNALAGU','TOASTMASTER OF THE DAY',C.maroon),
+      slot('TM KARTHIKEYAN','TABLE TOPIC MASTER',C.blue),
+      slot('TM MADHUVATHANA','GENERAL EVALUATOR',C.gold)
+    ],
+    groups:{
+      speakers:{label:'PREPARED SPEAKERS',color:C.maroon,items:[
+        slot('TM VIGNESH','SPEAKER 1',C.maroon),
+        slot('TM ANAND J','SPEAKER 2',C.maroon),
+        slot('TM DIVYA','SPEAKER 3',C.maroon)
+      ]},
+      evaluators:{label:'EVALUATORS',color:C.blue,items:[
+        slot('TM KAVITHA','EVALUATOR 1',C.blue),
+        slot('TM MADHU','EVALUATOR 2',C.blue),
+        slot('TM ANURAO','EVALUATOR 3',C.blue)
+      ]},
+      tag:{label:'TAG TEAM',color:C.gold,items:[
+        slot('TM SATHYA','TIMER',C.gold),
+        slot('TM PRIYA','AH-COUNTER',C.gold),
+        slot('TM ANURAO','GRAMMARIAN',C.gold)
+      ]},
+      meeting:{label:'MEETING ROLE PLAYERS',color:C.deep,items:[
+        slot('TM PONNALAGU','TOASTMASTER OF THE DAY',C.deep),
+        slot('TM KARTHIKEYAN','TABLE TOPICS MASTER',C.deep),
+        slot('TM MADHUVATHANA','GENERAL EVALUATOR',C.deep)
+      ]}
+    },
+    directory:[]
+  };
+}
+
+let state = defaults();
+let canvas, ctx;
+let cropCanvas, cropCtx;
+let draft = null;
+let migrateContact = false;
+let saveTimer = null, toastTimer = null;
+
+/* ---------------- utilities ---------------- */
+function getByPath(obj, path){
+  return path.split('.').reduce((o,k)=> (o==null?undefined:o[k]), obj);
+}
+function setByPath(obj, path, value){
+  const keys = path.split('.');
+  let cur = obj;
+  for(let i=0;i<keys.length-1;i++){
+    if(cur[keys[i]]==null) cur[keys[i]] = {};
+    cur = cur[keys[i]];
+  }
+  cur[keys[keys.length-1]] = value;
+}
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+function syncAppLogo(){
+  const el=document.getElementById('appLogo');
+  if(el) el.src=state.logo||BUILTIN_LOGO;
+}
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e){ toast('Storage is full — try removing a few saved photos.'); }
+  }, 260);
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const s = JSON.parse(raw);
+    const d = defaults();
+    state = Object.assign(d, s);
+    if((s.logoVersion||1)<2) state.logo=BUILTIN_LOGO;
+    state.logoVersion=2;
+    if(s.contact===OLD_CONTACT && (s.contactVersion||1)<2){ state.contact=d.contact; migrateContact=true; }
+    state.contactVersion=2;
+    state.photoCrop = Object.assign(freshCrop(), s.photoCrop||{});
+    if(Array.isArray(s.trio)){
+      state.trio = d.trio.map((base,i)=>Object.assign(base, s.trio[i]||{}, {crop:Object.assign(freshCrop(), (s.trio[i]||{}).crop||{})}));
+    }
+    ['speakers','evaluators','tag','meeting'].forEach(k=>{
+      const stored = (s.groups&&s.groups[k]&&s.groups[k].items)||[];
+      const base = d.groups[k];
+      base.items = stored.map(it=>Object.assign(slot('','',base.color), it, {crop:Object.assign(freshCrop(), it.crop||{})}));
+      if(s.groups&&s.groups[k]){
+        base.label = s.groups[k].label || base.label;
+        base.color = s.groups[k].color || base.color;
+      }
+    });
+    state.groups = d.groups;
+    state.directory = Array.isArray(s.directory) ? s.directory : [];
+  }catch(e){
+    console.warn('Could not restore saved state', e);
+  }
+}
+
+/* ---------------- images ---------------- */
+const imgCache = new Map();
+function imageFor(src){
+  if(!src) return null;
+  if(imgCache.has(src)) return imgCache.get(src);
+  const img = new Image();
+  img.onload = ()=>{ if(typeof render==='function') render(); if(cropCtx) drawCropPreview(); };
+  img.src = src;
+  imgCache.set(src, img);
+  return img;
+}
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = e=>resolve(e.target.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+function loadImage(src){
+  return new Promise((resolve,reject)=>{
+    const img = new Image();
+    img.onload = ()=>resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+async function compressFile(file, maxSide, quality, keepPng){
+  const raw = await fileToDataURL(file);
+  const img = await loadImage(raw);
+  const scale = Math.min(1, maxSide/Math.max(img.width,img.height));
+  const c = document.createElement('canvas');
+  c.width = Math.max(1,Math.round(img.width*scale));
+  c.height = Math.max(1,Math.round(img.height*scale));
+  const cx = c.getContext('2d');
+  cx.drawImage(img,0,0,c.width,c.height);
+  const type = (keepPng && file.type==='image/png') ? 'image/png' : 'image/jpeg';
+  return c.toDataURL(type, quality);
+}
+function initials(name){
+  const parts = String(name||'').trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return 'TM';
+  let s = parts.slice(0,2).map(p=>p.replace(/[^A-Za-z]/g,'').charAt(0)).join('').toUpperCase();
+  return s || 'TM';
+}
+
+/* ---------------- canvas drawing helpers ---------------- */
+function rr(c,x,y,w,h,r,fill,stroke,sw){
+  r = Math.min(r, w/2, h/2);
+  c.beginPath();
+  c.moveTo(x+r,y);
+  c.arcTo(x+w,y,x+w,y+h,r);
+  c.arcTo(x+w,y+h,x,y+h,r);
+  c.arcTo(x,y+h,x,y,r);
+  c.arcTo(x,y,x+w,y,r);
+  c.closePath();
+  if(fill){ c.fillStyle=fill; c.fill(); }
+  if(stroke){ c.lineWidth=sw||4; c.strokeStyle=stroke; c.stroke(); }
+}
+function wrapLines(c,text,maxW){
+  const words = String(text||'').split(/\s+/).filter(Boolean);
+  if(!words.length) return [''];
+  const lines=[]; let line='';
+  words.forEach(w=>{
+    const test = line ? line+' '+w : w;
+    if(c.measureText(test).width > maxW && line){ lines.push(line); line=w; }
+    else line=test;
+  });
+  if(line) lines.push(line);
+  return lines;
+}
+function fitText(c,text,maxW,maxH,maxPx,minPx,weight,family){
+  for(let s=maxPx;s>=minPx;s-=2){
+    c.font = weight+' '+s+'px '+family;
+    const lh = Math.round(s*1.24);
+    const lines = wrapLines(c,text,maxW);
+    if(lines.length*lh <= maxH || s===minPx) return {size:s,lh,lines};
+  }
+  return {size:minPx,lh:Math.round(minPx*1.24),lines:wrapLines(c,text,maxW)};
+}
+function drawFit(c,text,x,y,maxW,maxH,maxPx,minPx,weight,family,color,align){
+  const f = fitText(c,text,maxW,maxH,maxPx,minPx,weight,family);
+  c.font = weight+' '+f.size+'px '+family;
+  c.fillStyle = color;
+  c.textAlign = align||'left';
+  f.lines.forEach((ln,i)=>c.fillText(ln,x,y+i*f.lh));
+  c.textAlign='left';
+  return f;
+}
+function txt(c,text,x,y,font,color,align){
+  c.font=font; c.fillStyle=color; c.textAlign=align||'left';
+  c.fillText(String(text==null?'':text),x,y);
+  c.textAlign='left';
+}
+function grad(c,x0,y0,x1,y1,a,b){
+  const g=c.createLinearGradient(x0,y0,x1,y1);
+  g.addColorStop(0,a); g.addColorStop(1,b);
+  return g;
+}
+function star(c,cx,cy,size,color){
+  c.save(); c.translate(cx,cy); c.beginPath();
+  for(let i=0;i<10;i++){
+    const r = i%2===0 ? size : size*0.44;
+    const a = -Math.PI/2 + i*Math.PI/5;
+    const x=Math.cos(a)*r, y=Math.sin(a)*r;
+    i===0?c.moveTo(x,y):c.lineTo(x,y);
+  }
+  c.closePath(); c.fillStyle=color; c.fill(); c.restore();
+}
+function drawLogo(c,cx,cy,r,ring){
+  const img = imageFor(state.logo);
+  c.save();
+  c.beginPath(); c.arc(cx,cy,r,0,Math.PI*2); c.closePath();
+  c.fillStyle = C.white; c.fill(); c.clip();
+  if(img && img.complete && img.naturalWidth){
+    const pad = r*0.02;
+    const avail = 2*(r-pad);
+    const s = Math.min(avail/img.width, avail/img.height);
+    const dw=img.width*s, dh=img.height*s;
+    c.drawImage(img, cx-dw/2, cy-dh/2, dw, dh);
+  }else{
+    c.fillStyle=C.white; c.fillRect(cx-r,cy-r,2*r,2*r);
+    star(c,cx,cy-r*0.1,r*0.5,C.maroon);
+    txt(c,'TM',cx,cy+r*0.32,'800 '+Math.round(r*0.3)+'px '+FH,C.maroon,'center');
+  }
+  c.restore();
+  c.beginPath(); c.arc(cx,cy,r,0,Math.PI*2);
+  c.lineWidth=Math.max(5,r*0.09); c.strokeStyle=ring||C.gold; c.stroke();
+}
+function paintCrop(c,src,box,crop,bg,circle){
+  const {x,y,w,h}=box;
+  c.save();
+  c.beginPath();
+  if(circle) c.arc(x+w/2,y+h/2,Math.min(w,h)/2,0,Math.PI*2);
+  else rr(c,x,y,w,h,14);
+  c.closePath(); c.clip();
+  c.fillStyle=bg||C.gray; c.fillRect(x,y,w,h);
+  const img=imageFor(src);
+  if(img && img.complete && img.naturalWidth){
+    const base = crop.fit==='fit' ? Math.min(w/img.width,h/img.height) : Math.max(w/img.width,h/img.height);
+    const s = base*(crop.zoom||1);
+    const dw=img.width*s, dh=img.height*s;
+    const dx=x+w/2-dw/2+(crop.x||0)*dw;
+    const dy=y+h/2-dh/2+(crop.y||0)*dh;
+    c.drawImage(img,dx,dy,dw,dh);
+  }else{
+    c.fillStyle='rgba(255,255,255,.78)';
+    c.font='800 '+Math.round(Math.min(w,h)*0.34)+'px '+FH;
+    c.textAlign='center';
+    c.fillText(src?'…':initials(bg&&bg.__name?bg.__name:''),x+w/2,y+h/2);
+    c.textAlign='left';
+  }
+  c.restore();
+}
+function drawCrop(src,x,y,w,h,crop,border,bg,circle,fallbackName){
+  paintCrop(ctx,src,{x,y,w,h},crop,bg||C.gray,circle);
+  if(circle){
+    ctx.beginPath(); ctx.arc(x+w/2,y+h/2,Math.min(w,h)/2,0,Math.PI*2);
+  }else rr(ctx,x,y,w,h,14);
+  ctx.lineWidth=7; ctx.strokeStyle=border||C.gold; ctx.stroke();
+  const img=imageFor(src);
+  if(!(img&&img.complete&&img.naturalWidth)){
+    ctx.fillStyle=C.maroon;
+    ctx.font='800 '+Math.round(Math.min(w,h)*0.3)+'px '+FH;
+    ctx.textAlign='center';
+    ctx.fillText(initials(fallbackName),x+w/2,y+h/2+Math.round(Math.min(w,h)*0.11));
+    ctx.textAlign='left';
+  }
+}
+
+/* ---------------- iconography ---------------- */
+function icon(c,kind,cx,cy,s,color){
+  c.save(); c.strokeStyle=color; c.fillStyle=color; c.lineWidth=Math.max(2,s*0.11);
+  c.lineCap='round'; c.lineJoin='round';
+  if(kind==='clock'){
+    c.beginPath(); c.arc(cx,cy,s*0.8,0,Math.PI*2); c.stroke();
+    c.beginPath(); c.moveTo(cx,cy-s*0.36); c.lineTo(cx,cy); c.lineTo(cx+s*0.46,cy+s*0.2); c.stroke();
+  }else if(kind==='calendar'){
+    c.strokeRect(cx-s*.78,cy-s*.62,s*1.56,s*1.42);
+    c.beginPath(); c.moveTo(cx-s*.78,cy-s*.2); c.lineTo(cx+s*.78,cy-s*.2); c.stroke();
+    c.beginPath(); c.moveTo(cx-s*.4,cy-s*.95); c.lineTo(cx-s*.4,cy-s*.38); c.moveTo(cx+s*.4,cy-s*.95); c.lineTo(cx+s*.4,cy-s*.38); c.stroke();
+  }else if(kind==='pin'){
+    c.beginPath(); c.moveTo(cx,cy+s);
+    c.bezierCurveTo(cx-s*.85,cy+s*.05,cx-s*.75,cy-s*.95,cx,cy-s*.95);
+    c.bezierCurveTo(cx+s*.75,cy-s*.95,cx+s*.85,cy+s*.05,cx,cy+s);
+    c.stroke();
+    c.beginPath(); c.arc(cx,cy-s*.25,s*.28,0,Math.PI*2); c.stroke();
+  }else if(kind==='contact'){
+    c.beginPath(); c.arc(cx,cy-s*.35,s*.36,0,Math.PI*2); c.stroke();
+    c.beginPath(); c.arc(cx,cy+s*.85,s*.68,Math.PI,0); c.stroke();
+  }else if(kind==='spark'){
+    star(c,cx,cy,s*.85,color);
+  }
+  c.restore();
+}
+function pill(c,x,y,w,h,label,value,kind,bg,fg){
+  rr(c,x,y,w,h,h/2,bg);
+  c.beginPath(); c.arc(x+h/2,y+h/2,h*0.32,0,Math.PI*2);
+  c.fillStyle='rgba(255,255,255,.16)'; c.fill();
+  icon(c,kind,x+h/2,y+h/2,h*0.2,fg||C.white);
+  const tx=x+h*0.86, tw=w-h*1.05;
+  txt(c,label.toUpperCase(),tx,y+15,'700 17px '+FB,'rgba(255,255,255,.72)');
+  drawFit(c,value,tx,y+37,tw,h-48,26,15,'700',FH,fg||C.white);
+}
+
+/* ---------------- shared brand header ---------------- */
+function brandHeader(h,withMeeting){
+  ctx.fillStyle=grad(ctx,0,0,W,h,C.deep,C.maroon);
+  ctx.fillRect(0,0,W,h);
+  ctx.save(); ctx.globalAlpha=.07; ctx.fillStyle=C.gold;
+  ctx.beginPath(); ctx.arc(W-90,-40,260,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+  drawLogo(ctx,108,h/2,62,C.gold);
+  const fitName=fitText(ctx,state.clubName.toUpperCase(),W-300,72,58,34,'800',FH);
+  drawFit(ctx,state.clubName.toUpperCase(),198,32,W-300,72,58,34,'800',FH,C.gold);
+  txt(ctx,state.areaLine.toUpperCase(),200,32+fitName.lh+8,'600 25px '+FB,'rgba(255,255,255,.92)');
+  txt(ctx,'WHERE LEADERS ARE MADE',200,32+fitName.lh+44,'600 20px '+FB,C.gold);
+  if(withMeeting){
+    ctx.fillStyle=C.blue; ctx.fillRect(0,h,W,96);
+    ctx.fillStyle=C.gold; ctx.fillRect(0,h+94,W,3);
+    drawFit(ctx,state.meetingTag.toUpperCase(),W/2,h+16,W-120,64,50,28,'800',FH,C.white,'center');
+  }
+}
+
+/* ============================================================
+   FLYER 1 — TRIO SPOTLIGHT
+   ============================================================ */
+function renderTrio(){
+  ctx.fillStyle=C.cream; ctx.fillRect(0,0,W,H);
+  brandHeader(236,true);
+
+  const topPills = state.logisticsPlacement==='top';
+  if(topPills) drawTrioLogistics(356);
+
+  const baseY = topPills ? 490 : 386;
+  const cardW=420, cardH=600, gap=30, x0=(W-(cardW*3+gap*2))/2;
+  const steps=[0,54,108];
+
+  // subtle connector ribbon behind the stepped cards
+  ctx.save(); ctx.globalAlpha=.10; ctx.fillStyle=C.maroon;
+  ctx.beginPath();
+  ctx.moveTo(x0-40,baseY+cardH-40);
+  ctx.lineTo(W-x0+40,baseY+cardH+70);
+  ctx.lineTo(W-x0+40,baseY+cardH+100);
+  ctx.lineTo(x0-40,baseY+cardH-10);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+
+  state.trio.forEach((s,i)=>{
+    drawTrioCard(s, x0+i*(cardW+gap), baseY+steps[i], cardW, cardH, i+1);
+  });
+
+  // highlight bars
+  const barY=1240, barH=82;
+  rr(ctx,108,barY,640,barH,12,C.gold);
+  txt(ctx,'WORD OF THE DAY',136,barY+14,'700 19px '+FB,C.deep);
+  drawFit(ctx,(state.wordOfDay||'—').toUpperCase(),136,barY+40,584,38,38,24,'800',FH,C.deep);
+  rr(ctx,768,barY,660,barH,12,C.blue);
+  txt(ctx,'THEME OF THE DAY',796,barY+14,'700 19px '+FB,C.gold);
+  drawFit(ctx,(state.themeOfDay||'—').toUpperCase(),796,barY+40,604,38,38,22,'800',FH,C.white);
+
+  if(!topPills) drawTrioLogistics(1344);
+
+  // footer strip: facilitator/contact line + club tagline
+  ctx.fillStyle=C.deep; ctx.fillRect(0,1444,W,92);
+  ctx.fillStyle=C.gold; ctx.fillRect(0,1440,W,4);
+  drawFit(ctx,(state.contact||'').toUpperCase(),W/2,1456,W-80,44,30,18,'700',FB,C.white,'center');
+  drawFit(ctx,state.clubName.toUpperCase()+'  •  WHERE LEADERS ARE MADE',W/2,1502,W-80,30,22,15,'700',FH,C.gold,'center');
+}
+function drawTrioLogistics(y){
+  const items=[
+    ['DATE',state.date,'calendar'],
+    ['TIME',state.time,'clock'],
+    ['MEMBERSHIP FACILITATION / CONTACT',state.contact,'contact'],
+    ['VENUE',state.venue,'pin']
+  ];
+  const w=(W-2*108-3*18)/4;
+  items.forEach((it,i)=>pill(ctx,108+i*(w+18),y,w,90,it[0],it[1],it[2],i===2?C.maroon:C.blue,C.white));
+}
+function drawTrioCard(s,x,y,w,h,index){
+  const border=s.color||C.maroon;
+  const labelColor = border===C.gold ? C.deep : C.white;
+  rr(ctx,x,y,w,h,16,C.white,border,10);
+  rr(ctx,x+10,y+10,w-20,58,9,border);
+  drawFit(ctx,(s.role||'ROLE').toUpperCase(),x+28,y+22,w-56,38,30,19,'800',FH,labelColor);
+  // name badge above photo
+  rr(ctx,x+24,y+80,w-48,52,9,C.gold);
+  txt(ctx,(s.name||'MEMBER NAME').toUpperCase(),x+w/2,y+93,'800 28px '+FH,C.deep,'center');
+  // photo
+  drawCrop(s.photo,x+24,y+146,w-48,340,s.crop,border,C.gray,false,s.name);
+  // footer detail
+  ctx.strokeStyle='rgba(119,36,50,.22)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(x+50,y+508); ctx.lineTo(x+w-50,y+508); ctx.stroke();
+  star(ctx,x+w/2,y+542,13,C.gold);
+  txt(ctx,'LEADER '+String(index).padStart(2,'0'),x+w/2,y+566,'700 19px '+FB,'#9b8f88','center');
+}
+
+/* ============================================================
+   FLYER 2 — ALL ROLE PLAYERS
+   ============================================================ */
+function renderRoles(){
+  ctx.fillStyle=C.cream; ctx.fillRect(0,0,W,H);
+  brandHeader(198,false);
+
+  // theme + word panel (left)
+  const lx=64, lw=858;
+  rr(ctx,lx,226,lw,226,14,C.deep);
+  ctx.fillStyle=grad(ctx,lx,226,lx+lw,452,C.maroon,C.deep);
+  rr(ctx,lx,226,lw,226,14,ctx.fillStyle);
+  txt(ctx,'THEME OF THE DAY',lx+30,248,'700 22px '+FB,C.gold);
+  drawFit(ctx,(state.themeOfDay||'—').toUpperCase(),lx+30,286,lw-60,146,64,36,'800',FH,C.white);
+  rr(ctx,lx,468,lw,122,14,C.gold);
+  txt(ctx,'WORD OF THE DAY',lx+30,486,'700 20px '+FB,C.deep);
+  drawFit(ctx,(state.wordOfDay||'—').toUpperCase(),lx+30,514,lw-60,64,54,32,'900',FH,C.deep);
+
+  // meeting callout (right)
+  const rx=948, rw=524;
+  rr(ctx,rx,226,rw,364,14,C.blue,C.gold,6);
+  ctx.fillStyle=grad(ctx,rx,226,rx+rw,590,C.blue,C.blueDeep);
+  rr(ctx,rx,226,rw,364,14,ctx.fillStyle);
+  ctx.fillStyle=C.gold; ctx.fillRect(rx+26,258,86,5);
+  txt(ctx,'MEETING',rx+26,282,'700 22px '+FB,C.gold);
+  const num=(String(state.meetingTag).match(/#\s*(\d+)/)||[])[1]||'';
+  if(num) txt(ctx,'#'+num,rx+20,312,'900 150px '+FH,C.gold);
+  drawFit(ctx,String(state.meetingTag).toUpperCase(),rx+26,472,rw-52,76,34,22,'800',FH,C.white);
+  ctx.fillStyle='rgba(255,255,255,.16)'; ctx.fillRect(rx+26,556,rw-52,2);
+  drawFit(ctx,(state.calloutLine||'').toUpperCase(),rx+26,568,rw-52,26,23,16,'700',FB,C.gold);
+
+  // grouped role sections
+  const order=['speakers','evaluators','tag','meeting'];
+  const secX=64, secW=W-128, secH=166, secGap=10, secY=606;
+  order.forEach((key,si)=>{
+    const g=state.groups[key];
+    const y=secY+si*(secH+secGap);
+    rr(ctx,secX,y,secW,secH,12,'rgba(255,255,255,.9)');
+    rr(ctx,secX,y,8,secH,4,g.color===C.gold?C.maroon:g.color);
+    txt(ctx,g.label.toUpperCase(),secX+24,y+13,'800 27px '+FH,g.color===C.gold?C.maroon:g.color);
+    txt(ctx,String(g.items.length).padStart(2,'0')+' ROLES',secX+secW-24,y+17,'700 19px '+FB,'#a49791','right');
+    ctx.strokeStyle='rgba(119,36,50,.12)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(secX+24,y+48); ctx.lineTo(secX+secW-24,y+48); ctx.stroke();
+
+    const items=g.items, n=Math.max(1,items.length), gap=14;
+    const cw=(secW-48-(n-1)*gap)/n;
+    items.forEach((it,ci)=>{
+      const cx=secX+24+ci*(cw+gap), cy=y+58, ch=secH-68;
+      rr(ctx,cx,cy,cw,ch,9,'#fbf9f4');
+      drawCrop(it.photo,cx+12,cy+12,ch-24,ch-24,it.crop,g.color,C.gray,true,it.name);
+      const tx=cx+ch+8;
+      const nameSize=n>=4?24:29;
+      const roleSize=n>=4?18:21;
+      drawFit(ctx,(it.name||'MEMBER NAME').toUpperCase(),tx,cy+18,cw-(ch+16),40,nameSize,18,'800',FH,C.deep);
+      drawFit(ctx,(it.role||'ROLE').toUpperCase(),tx,cy+62,cw-(ch+16),36,roleSize,15,'700',FB,g.color===C.gold?C.maroon:g.color);
+    });
+  });
+
+  // logistics icons
+  const ly=1312, lw3=(W-128-2*16)/3;
+  pill(ctx,64,ly,lw3,84,'TIME',state.time,'clock',C.blue,C.white);
+  pill(ctx,64+lw3+16,ly,lw3,84,'DATE',state.date,'calendar',C.maroon,C.white);
+  pill(ctx,64+(lw3+16)*2,ly,lw3,84,'VENUE',state.venue,'pin',C.deep,C.white);
+
+  // contact bar
+  ctx.fillStyle=C.maroon; ctx.fillRect(0,1412,W,124);
+  ctx.fillStyle=C.gold; ctx.fillRect(0,1408,W,4);
+  drawFit(ctx,(state.contact||'').toUpperCase(),W/2,1434,W-120,76,34,20,'700',FB,C.white,'center');
+}
+
+/* ============================================================
+   OTHER FLYER MODES (shared feature photo)
+   ============================================================ */
+function renderNewMember(){
+  const light=state.theme==='light';
+  ctx.fillStyle=grad(ctx,0,0,W,H,light?C.cream:C.deep,light?C.gray:C.maroon);
+  ctx.fillRect(0,0,W,H);
+  ctx.save(); ctx.globalAlpha=.05; ctx.strokeStyle=C.white;
+  for(let i=-H;i<W;i+=30){ ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i+H,H); ctx.stroke(); }
+  ctx.restore();
+  const primary=light?C.maroon:C.gold, secondary=light?C.blue:C.white;
+  txt(ctx,state.clubName.toUpperCase(),80,80,'700 50px '+FB,primary);
+  txt(ctx,state.hashtag,82,142,'400 34px '+FB,secondary);
+  drawLogo(ctx,W-180,130,96,C.gold);
+
+  txt(ctx,'WELCOME TO THE',80,310,'800 92px '+FH,primary);
+  txt(ctx,state.clubName.toUpperCase()+'!',80,414,'800 74px '+FH,secondary);
+  drawFit(ctx,(state.personName||'').toUpperCase(),80,510,W-160,72,56,32,'800',FH,C.gold);
+
+  drawCrop(state.photo,W-330,640,250,250,state.photoCrop,C.gold,C.gray,true,state.personName);
+
+  rr(ctx,80,670,900,470,14,C.blue);
+  ctx.fillStyle=grad(ctx,80,670,980,1140,C.blue,C.blueDeep);
+  rr(ctx,80,670,900,470,14,ctx.fillStyle);
+  txt(ctx,'WHY I JOINED',120,710,'700 46px '+FB,C.gold);
+  ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(120,780); ctx.lineTo(940,780); ctx.stroke();
+  drawFit(ctx,state.message,120,820,820,220,38,24,'400',FB,C.white);
+  txt(ctx,(state.footerLine||'').toUpperCase(),120,1080,'700 34px '+FB,C.gold);
+
+  ctx.fillStyle=C.gold; ctx.fillRect(0,1210,W,6);
+  drawFit(ctx,state.contact.toUpperCase(),W/2,1250,W-120,120,32,20,'700',FB,light?C.blue:C.white,'center');
+  txt(ctx,'WHERE LEADERS ARE MADE',W/2,1420,'700 30px '+FH,light?C.maroon:C.gold,'center');
+}
+function renderBirthday(){
+  const light=state.theme==='light';
+  ctx.fillStyle=grad(ctx,0,0,W,H,light?C.cream:C.deep,light?C.gray:C.maroon);
+  ctx.fillRect(0,0,W,H);
+  const primary=light?C.maroon:C.gold;
+  txt(ctx,state.clubName.toUpperCase(),80,80,'700 48px '+FB,primary);
+  txt(ctx,state.hashtag,82,140,'400 32px '+FB,light?C.blue:C.white);
+  drawLogo(ctx,W-180,130,96,C.gold);
+  txt(ctx,'HAPPY BIRTHDAY',80,300,'900 96px '+FH,primary);
+  drawFit(ctx,(state.personName||'').toUpperCase(),80,420,W-160,96,72,40,'900',FH,light?C.blue:C.white);
+  drawCrop(state.photo,80,570,520,520,state.photoCrop,C.gold,C.gray,true,state.personName);
+  rr(ctx,660,590,796,500,14,light?C.blue:C.maroon);
+  txt(ctx,'BIRTHDAY WISHES',700,630,'700 44px '+FB,C.gold);
+  drawFit(ctx,state.message,700,710,716,250,38,24,'400',FB,C.white);
+  txt(ctx,(state.footerLine||'').toUpperCase(),700,1080,'700 36px '+FB,C.gold);
+  ctx.fillStyle=C.gold; ctx.fillRect(0,1210,W,6);
+  drawFit(ctx,state.contact.toUpperCase(),W/2,1250,W-120,120,32,20,'700',FB,light?C.blue:C.white,'center');
+  txt(ctx,'WHERE LEADERS ARE MADE',W/2,1420,'700 30px '+FH,primary,'center');
+}
+function renderGroup(){
+  ctx.fillStyle=C.cream; ctx.fillRect(0,0,W,H);
+  brandHeader(230,true);
+  drawCrop(state.photo,0,352,W,830,state.photoCrop,C.blue,C.gray,false,'GROUP PHOTO');
+  ctx.fillStyle=C.maroon; ctx.fillRect(0,1182,W,354);
+  ctx.fillStyle=C.gold; ctx.fillRect(0,1182,W,4);
+  drawFit(ctx,state.contact.toUpperCase(),W/2,1300,W-120,180,38,22,'700',FB,C.white,'center');
+}
+function renderTmod(){
+  ctx.fillStyle=grad(ctx,0,0,W,H,C.deep,C.maroon); ctx.fillRect(0,0,W,H);
+  brandHeader(180,false);
+  rr(ctx,64,214,W-128,218,12,'rgba(255,255,255,.06)');
+  txt(ctx,'THEME OF THE DAY',94,236,'700 24px '+FB,C.gold);
+  drawFit(ctx,state.themeOfDay.toUpperCase(),94,274,W-188,140,64,36,'800',FH,C.white);
+  ctx.fillStyle=C.gold; ctx.fillRect(0,452,W,108);
+  txt(ctx,'WORD OF THE DAY',W/2,466,'700 22px '+FB,C.deep,'center');
+  drawFit(ctx,state.wordOfDay.toUpperCase(),W/2,494,W-160,56,58,34,'900',FH,C.deep,'center');
+
+  drawCrop(state.photo,64,600,500,540,state.photoCrop,C.gold,C.gray,false,state.personName);
+  rr(ctx,64,1152,500,96,10,C.gold);
+  drawFit(ctx,(state.personName||'TMOD').toUpperCase(),314,1174,460,60,40,26,'800',FH,C.deep,'center');
+
+  const ix=600, iw=W-ix-64;
+  const boxes=[['DATE',state.date,136],['TIME',state.time,136],['VENUE',state.venue,178]];
+  let iy=600;
+  boxes.forEach(b=>{
+    rr(ctx,ix,iy,iw,b[2],10,'rgba(255,255,255,.08)');
+    txt(ctx,b[0],ix+24,iy+20,'700 23px '+FB,C.gold);
+    drawFit(ctx,b[1],ix+24,iy+58,iw-48,b[2]-70,42,24,'800',FH,C.white);
+    iy+=b[2]+14;
+  });
+  ctx.fillStyle=C.blue; ctx.fillRect(0,1300,W,236);
+  drawFit(ctx,state.contact.toUpperCase(),W/2,1334,W-120,100,34,20,'700',FB,C.white,'center');
+  txt(ctx,'WHERE LEADERS ARE MADE',W/2,1452,'700 28px '+FH,C.gold,'center');
+}
+function renderEvent(){
+  const light=state.theme==='light';
+  ctx.fillStyle=grad(ctx,0,0,W,H,light?C.cream:C.deep,light?C.gray:C.maroon);
+  ctx.fillRect(0,0,W,H);
+  txt(ctx,state.clubName.toUpperCase(),60,60,'700 46px '+FB,light?C.maroon:C.gold);
+  drawLogo(ctx,W-120,100,70,C.gold);
+  rr(ctx,60,160,W-120,190,12,light?C.blue:C.maroon);
+  drawFit(ctx,state.eventTitle.toUpperCase(),W/2,188,W-180,96,64,36,'900',FH,light?C.white:C.gold,'center');
+  drawFit(ctx,(state.eventSubtitle||'').toUpperCase(),W/2,292,W-180,48,36,22,'700',FB,C.white,'center');
+
+  drawCrop(state.photo,60,390,540,640,state.photoCrop,C.gold,C.gray,false,state.speakerName);
+  const dx=640, dw=W-dx-60;
+  const details=[
+    [state.speakerTitle,state.speakerName,110],
+    ['DATE',state.date,106],
+    ['TIME',state.time,106],
+    ['VENUE',state.venue,150]
+  ];
+  let dy=390;
+  details.forEach((d,i)=>{
+    rr(ctx,dx,dy,dw,d[2],10,'rgba(255,255,255,.10)');
+    txt(ctx,d[0].toUpperCase(),dx+22,dy+18,'700 21px '+FB,C.gold);
+    drawFit(ctx,d[1].toUpperCase(),dx+22,dy+52,dw-44,d[2]-62,i===3?28:40,22,'800',FH,C.white);
+    dy+=d[2]+14;
+  });
+  ctx.fillStyle=C.gold; ctx.fillRect(0,1090,W,4);
+  drawFit(ctx,state.contact.toUpperCase(),W/2,1120,W-120,140,34,22,'700',FB,C.white,'center');
+  drawFit(ctx,state.themeOfDay.toUpperCase(),W/2,1290,W-120,60,38,24,'800',FH,C.gold,'center');
+  txt(ctx,'WORD: '+state.wordOfDay.toUpperCase(),W/2,1390,'700 30px '+FB,C.white,'center');
+  txt(ctx,'WHERE LEADERS ARE MADE',W/2,1470,'700 26px '+FH,C.gold,'center');
+}
+
+/* ---------------- render dispatch ---------------- */
+function render(){
+  if(!ctx) return;
+  ctx.textBaseline='top';
+  ctx.clearRect(0,0,W,H);
+  switch(state.mode){
+    case 'trio': renderTrio(); break;
+    case 'roles': renderRoles(); break;
+    case 'new_member': renderNewMember(); break;
+    case 'birthday': renderBirthday(); break;
+    case 'group': renderGroup(); break;
+    case 'tmod': renderTmod(); break;
+    case 'event': renderEvent(); break;
+  }
+}
+
+/* ============================================================
+   EDITOR UI
+   ============================================================ */
+function field(label,id,value,help){
+  return '<div class="field"><label for="'+id+'">'+esc(label)+'</label>'+
+    '<input type="text" id="'+id+'" data-path="'+id+'" autocomplete="off" value="'+esc(value)+'">'+
+    (help?'<div class="hint">'+esc(help)+'</div>':'')+'</div>';
+}
+function textarea(label,id,value){
+  return '<div class="field"><label for="'+id+'">'+esc(label)+'</label>'+
+    '<textarea id="'+id+'" data-path="'+id+'" autocomplete="off">'+esc(value)+'</textarea></div>';
+}
+function pathField(label,path,value){
+  return '<div class="field"><label>'+esc(label)+'</label>'+
+    '<input type="text" data-path="'+esc(path)+'" autocomplete="off" value="'+esc(value)+'"></div>';
+}
+function photoButtons(path,obj){
+  const has=!!obj.photo;
+  return '<div class="photo-thumbs">'+
+    '<div class="thumb">'+(has?'<img src="'+esc(obj.photo)+'" alt="">':initials(obj.name))+'</div>'+
+    '<div style="flex:1;min-width:0">'+
+      '<label style="margin-bottom:5px">Photo</label>'+
+      '<input type="file" accept="image/png,image/jpeg" data-photo-path="'+esc(path)+'" style="font-size:.75rem;padding:7px;border:1px dashed #d8d0c0;border-radius:8px;width:100%">'+
+    '</div></div>'+
+    '<div class="btn-row">'+
+      '<button class="btn blue tiny" data-action="crop" data-path="'+esc(path)+'">✂ Crop / Zoom</button>'+
+      '<button class="btn tiny" data-action="pick" data-path="'+esc(path)+'">◎ Pick Member</button>'+
+      '<button class="btn tiny" data-action="saveDir" data-path="'+esc(path)+'">＋ Save Member</button>'+
+      (has?'<button class="btn danger tiny" data-action="clearPhoto" data-path="'+esc(path)+'">Remove</button>':'')+
+    '</div>';
+}
+function buildSharedFields(){
+  const el=document.getElementById('sharedFields');
+  el.innerHTML =
+    '<div class="field"><label>Club Logo</label>'+
+      '<input type="file" id="logoInput" accept="image/png,image/jpeg" style="font-size:.75rem;padding:8px;border:1px dashed #d8d0c0;border-radius:8px;width:100%">'+
+      '<div class="hint">PNG or JPG. Falls back to a generic Toastmasters-style emblem.</div>'+
+      '<div class="btn-row"><button class="btn tiny danger" data-action="clearLogo">Remove Logo</button></div>'+
+    '</div>'+
+    field('Club Name','clubName',state.clubName)+
+    field('Area / Division / District','areaLine',state.areaLine)+
+    field('Meeting Number & Tag','meetingTag',state.meetingTag,'e.g. MEETING #837 (ICE BREAKER MARATHON)')+
+    '<div class="grid2">'+
+      field('Date','date',state.date)+
+      field('Time','time',state.time)+
+    '</div>'+
+    textarea('Venue','venue',state.venue)+
+    textarea('Contact & Guest Fee Line','contact',state.contact)+
+    (state.mode==='group'?'':'<div class="grid2">'+
+      field('Theme of the Day','themeOfDay',state.themeOfDay)+
+      field('Word of the Day','wordOfDay',state.wordOfDay)+
+    '</div>')+
+    (state.mode==='group'?'':field('Callout Line (Role Players)','calloutLine',state.calloutLine))+
+    '<div class="field"><label>Color Theme (other templates)</label>'+
+      '<div class="segmented">'+
+        '<button data-action="theme" data-theme="maroon" class="'+(state.theme==='maroon'?'active':'')+'">Maroon</button>'+
+        '<button data-action="theme" data-theme="light" class="'+(state.theme==='light'?'active':'')+'">Light</button>'+
+      '</div></div>';
+}
+function buildModeFields(){
+  const el=document.getElementById('modeFields');
+  const mode=MODES.find(m=>m.id===state.mode);
+  document.getElementById('modeCardTitle').textContent=mode.label;
+  document.getElementById('modeLabel').textContent=mode.label;
+  let html='';
+
+  if(state.mode==='trio'){
+    html+='<div class="field"><label>Logistics Pills Placement</label>'+
+      '<div class="segmented">'+
+        '<button data-action="placement" data-value="top" class="'+(state.logisticsPlacement==='top'?'active':'')+'">Upper</button>'+
+        '<button data-action="placement" data-value="bottom" class="'+(state.logisticsPlacement==='bottom'?'active':'')+'">Bottom Footer</button>'+
+      '</div><div class="hint">Moves Date, Time, Contact and Venue together.</div></div>';
+    state.trio.forEach((s,i)=>{
+      html+='<details class="slot" '+(i===0?'open':'')+'>'+
+        '<summary><span class="dot" style="background:'+esc(s.color)+'"></span>'+esc('Leader '+(i+1))+
+        '<small>'+esc(s.name||'No name yet')+'</small></summary><div class="slot-body">'+
+        pathField('Role Label','trio.'+i+'.role',s.role)+
+        pathField('Member Name','trio.'+i+'.name',s.name)+
+        '<div class="field"><label>Card Border Color</label><div class="swatches">'+
+          [C.maroon,C.blue,C.gold,C.deep].map(col=>'<button class="swatch '+(s.color===col?'active':'')+'" data-action="cardColor" data-path="trio.'+i+'.color" data-color="'+col+'" style="background:'+col+'" aria-label="Color"></button>').join('')+
+        '</div></div>'+
+        photoButtons('trio.'+i,s)+
+        '</div></details>';
+    });
+  }
+
+  if(state.mode==='roles'){
+    Object.keys(state.groups).forEach(key=>{
+      const g=state.groups[key];
+      html+='<details class="slot"><summary><span class="dot" style="background:'+esc(g.color)+'"></span>'+
+        esc(g.label)+'<small>'+g.items.length+' slots</small></summary><div class="slot-body">'+
+        '<div class="field"><label>Section Label</label><input type="text" data-path="groups.'+key+'.label" value="'+esc(g.label)+'"></div>';
+      g.items.forEach((it,i)=>{
+        html+='<div style="border-top:1px solid #eee8dc;padding-top:10px;margin-top:10px">'+
+          '<div class="grid2">'+
+            pathField('Role Title','groups.'+key+'.items.'+i+'.role',it.role)+
+            pathField('Member Name','groups.'+key+'.items.'+i+'.name',it.name)+
+          '</div>'+
+          photoButtons('groups.'+key+'.items.'+i,it)+
+          (g.items.length>1?'<div class="btn-row"><button class="btn danger tiny" data-action="removeSlot" data-group="'+key+'" data-index="'+i+'">Remove Slot</button></div>':'')+
+        '</div>';
+      });
+      html+='<div class="btn-row">'+
+        '<button class="btn tiny" data-action="addSlot" data-group="'+key+'" '+(g.items.length>=4?'disabled style="opacity:.5"':'')+'>＋ Add Slot</button>'+
+        '</div></div></details>';
+    });
+  }
+
+  const extra={
+    new_member:[
+      field('Member Name','personName',state.personName),
+      field('Hashtag','hashtag',state.hashtag),
+      textarea('Why I Joined','message',state.message),
+      field('Closing Line','footerLine',state.footerLine)
+    ],
+    birthday:[
+      field('Member Name','personName',state.personName),
+      field('Hashtag','hashtag',state.hashtag),
+      textarea('Birthday Message','message',state.message),
+      field('Closing Line','footerLine',state.footerLine)
+    ],
+    group:['<p class="hint" style="margin-top:12px">The group photo fills the centre. Meeting details, theme and word come from the shared fields above.</p>'],
+    tmod:[
+      field('Toastmaster of the Day','personName',state.personName),
+      textarea('Contact / Details Line','message',state.message)
+    ],
+    event:[
+      field('Event Title','eventTitle',state.eventTitle),
+      field('Event Subtitle','eventSubtitle',state.eventSubtitle),
+      field('Speaker / Chief Judge','speakerName',state.speakerName),
+      field('Speaker Role','speakerTitle',state.speakerTitle),
+      textarea('Tagline / Details','message',state.message)
+    ]
+  };
+  if(extra[state.mode]) html+=extra[state.mode].join('');
+
+  if(state.mode!=='trio' && state.mode!=='roles'){
+    html+='<div class="field"><label style="margin-top:18px">Feature Photo</label>'+
+      photoButtons('photo',{photo:state.photo,name:state.personName})+'</div>';
+  }
+  el.innerHTML=html;
+}
+
+/* ---------------- member directory ---------------- */
+function renderDirectory(){
+  const body=document.getElementById('directoryBody');
+  const list=state.directory.map(m=>
+    '<div class="dir-item pickable" data-action="dirAssign" data-id="'+esc(m.id)+'" title="Assign to last chosen slot">'+
+      '<div class="av">'+(m.photo?'<img src="'+esc(m.photo)+'" alt="">':initials(m.name))+'</div>'+
+      '<div class="nm">'+esc(m.name)+'</div>'+
+      '<button class="del" data-action="dirDelete" data-id="'+esc(m.id)+'" aria-label="Delete">×</button>'+
+    '</div>').join('');
+  body.innerHTML=
+    '<div class="field"><label>New Member Name</label><input type="text" id="dirName" placeholder="TM Full Name"></div>'+
+    '<div class="field"><label>Headshot</label><input type="file" id="dirFile" accept="image/png,image/jpeg" style="font-size:.75rem;padding:8px;border:1px dashed #d8d0c0;border-radius:8px;width:100%"></div>'+
+    '<div class="btn-row"><button class="btn primary tiny" data-action="dirAdd">Save to Directory</button>'+
+    '<button class="btn tiny" data-action="resetAll">Reset Everything</button></div>'+
+    '<div class="hint" style="margin-top:10px">Tap “Pick Member” in any slot to choose one of these in a tap. Photos are resized before saving so they persist on your device.</div>'+
+    '<div class="dir-list">'+(list||'<p class="hint" style="grid-column:1/-1">No saved members yet.</p>')+'</div>';
+}
+function renderCropPicker(){
+  const el=document.getElementById('cropPicker');
+  if(!el) return;
+  el.innerHTML=state.directory.map(m=>
+    '<div class="dir-item pickable" data-action="pickFromDir" data-id="'+esc(m.id)+'">'+
+      '<div class="av">'+(m.photo?'<img src="'+esc(m.photo)+'" alt="">':initials(m.name))+'</div>'+
+      '<div class="nm">'+esc(m.name)+'</div>'+
+    '</div>').join('') || '<p class="hint">Save members in the directory first.</p>';
+}
+
+/* ---------------- crop editor ---------------- */
+function cropObj(path){
+  if(path==='photo') return {photo:state.photo,crop:state.photoCrop,name:state.personName};
+  return getByPath(state,path);
+}
+function setCropObj(path,photo,crop){
+  if(path==='photo'){ state.photo=photo; state.photoCrop=crop; }
+  else{
+    const o=getByPath(state,path);
+    if(o){ o.photo=photo; o.crop=crop; }
+  }
+}
+function openCrop(path){
+  const o=cropObj(path);
+  if(!o) return;
+  draft={path:path, photo:o.photo||null, crop:Object.assign(freshCrop(),o.crop||{}), name:o.name||''};
+  document.getElementById('cropModal').classList.remove('hidden');
+  syncCropControls();
+  drawCropPreview();
+  renderCropPicker();
+}
+function closeCrop(){
+  draft=null;
+  document.getElementById('cropModal').classList.add('hidden');
+}
+function syncCropControls(){
+  if(!draft) return;
+  document.getElementById('cropZoom').value=Math.round((draft.crop.zoom||1)*100);
+  document.getElementById('cropX').value=Math.round((draft.crop.x||0)*100);
+  document.getElementById('cropY').value=Math.round((draft.crop.y||0)*100);
+  document.getElementById('zoomVal').textContent=Math.round((draft.crop.zoom||1)*100)+'%';
+  document.getElementById('xVal').textContent=Math.round((draft.crop.x||0)*100);
+  document.getElementById('yVal').textContent=Math.round((draft.crop.y||0)*100);
+  document.querySelectorAll('[data-action="cropFit"]').forEach(b=>{
+    b.classList.toggle('active', b.dataset.fit===(draft.crop.fit||'cover'));
+  });
+}
+function drawCropPreview(){
+  if(!cropCtx||!draft) return;
+  cropCtx.clearRect(0,0,600,600);
+  paintCrop(cropCtx,draft.photo,{x:0,y:0,w:600,h:600},draft.crop,C.gray,false);
+}
+
+/* ---------------- event wiring ---------------- */
+function buildModeTabs(){
+  document.getElementById('modeTabs').innerHTML=MODES.map(m=>
+    '<button class="mode-tab '+(state.mode===m.id?'active':'')+'" data-action="mode" data-mode="'+m.id+'">'+esc(m.label)+'</button>').join('');
+}
+
+document.addEventListener('input', e=>{
+  const t=e.target;
+  if(t.dataset.path && t.type!=='file'){
+    setByPath(state,t.dataset.path,t.value);
+    scheduleSave(); render();
+    if(t.dataset.path.indexOf('trio.')===0 || t.dataset.path.indexOf('groups.')===0){
+      const card=t.closest('.slot');
+      const small=card&&card.querySelector('summary small');
+      if(small && /\.name$/.test(t.dataset.path)) small.textContent=t.value||'No name yet';
+    }
+    return;
+  }
+  if(t.id==='cropZoom'||t.id==='cropX'||t.id==='cropY'){
+    if(!draft) return;
+    draft.crop.zoom=Number(document.getElementById('cropZoom').value)/100;
+    draft.crop.x=Number(document.getElementById('cropX').value)/100;
+    draft.crop.y=Number(document.getElementById('cropY').value)/100;
+    syncCropControls(); drawCropPreview();
+  }
+});
+
+document.addEventListener('change', async e=>{
+  const t=e.target;
+  if(t.id==='logoInput' && t.files && t.files[0]){
+    try{
+      state.logo=await compressFile(t.files[0],360,.85,true);
+      syncAppLogo(); render(); scheduleSave(); toast('Logo updated.');
+    }catch(err){ toast('Could not read that logo.'); }
+    return;
+  }
+  const path=t.dataset.photoPath;
+  if(!path || !t.files || !t.files[0]) return;
+  try{
+    const data=await compressFile(t.files[0], path==='__draft'?760:640,.82,false);
+    if(path==='__draft'){
+      if(draft){ draft.photo=data; drawCropPreview(); }
+    }else{
+      setCropObj(path,data, cropObj(path).crop);
+      buildModeFields(); render(); scheduleSave(); toast('Photo added — tap Crop / Zoom to adjust.');
+    }
+  }catch(err){ toast('Could not read that image.'); }
+});
+
+document.addEventListener('click', async e=>{
+  const btn=e.target.closest('[data-action]');
+  if(!btn) return;
+  const a=btn.dataset.action;
+
+  if(a==='mode'){
+    state.mode=btn.dataset.mode;
+    buildModeTabs(); buildSharedFields(); buildModeFields(); render(); scheduleSave();
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if(a==='theme'){
+    state.theme=btn.dataset.theme;
+    buildSharedFields(); render(); scheduleSave();
+    return;
+  }
+  if(a==='placement'){
+    state.logisticsPlacement=btn.dataset.value;
+    buildModeFields(); render(); scheduleSave();
+    return;
+  }
+  if(a==='cardColor'){
+    setByPath(state,btn.dataset.path,btn.dataset.color);
+    buildModeFields(); render(); scheduleSave();
+    return;
+  }
+  if(a==='addSlot'||a==='removeSlot'){
+    const g=state.groups[btn.dataset.group];
+    if(a==='addSlot' && g.items.length<4) g.items.push(slot('','ROLE '+(g.items.length+1),g.color));
+    if(a==='removeSlot' && g.items.length>1) g.items.splice(Number(btn.dataset.index),1);
+    buildModeFields(); render(); scheduleSave();
+    return;
+  }
+  if(a==='clearLogo'){ state.logo=null; syncAppLogo(); render(); scheduleSave(); return; }
+  if(a==='clearPhoto'){ setCropObj(btn.dataset.path,null,cropObj(btn.dataset.path).crop); buildModeFields(); render(); scheduleSave(); return; }
+  if(a==='crop'||a==='pick'){ openCrop(btn.dataset.path); return; }
+  if(a==='cropClose'){ closeCrop(); return; }
+  if(a==='cropFit'){
+    if(!draft) return;
+    draft.crop.fit=btn.dataset.fit; syncCropControls(); drawCropPreview(); return;
+  }
+  if(a==='cropReset'){
+    if(!draft) return;
+    draft.crop=freshCrop(); syncCropControls(); drawCropPreview(); return;
+  }
+  if(a==='cropDone'){
+    if(!draft) return;
+    const o=cropObj(draft.path);
+    if(o && !o.name && draft.name) o.name=draft.name;
+    setCropObj(draft.path,draft.photo,Object.assign({},draft.crop));
+    closeCrop(); buildModeFields(); render(); scheduleSave(); toast('Photo applied.');
+    return;
+  }
+  if(a==='pickFromDir'){
+    const m=state.directory.find(x=>String(x.id)===String(btn.dataset.id));
+    if(!m||!draft) return;
+    draft.photo=m.photo||null;
+    const o=cropObj(draft.path);
+    if(o && !o.name) o.name=m.name;
+    drawCropPreview(); toast(m.name+' selected.');
+    return;
+  }
+  if(a==='cropSaveDir'||a==='saveDir'||a==='dirAdd'){
+    let name='', photo=null;
+    if(a==='cropSaveDir' && draft){ name=draft.name||''; photo=draft.photo; }
+    else if(a==='saveDir'){
+      const o=cropObj(btn.dataset.path); name=(o&&o.name)||''; photo=(o&&o.photo)||null;
+    }else{
+      name=document.getElementById('dirName').value.trim();
+      const f=document.getElementById('dirFile').files[0];
+      if(f){ try{ photo=await compressFile(f,420,.72,false); }catch(err){} }
+    }
+    if(!photo){ toast('Add a photo first.'); return; }
+    if(!name) name=prompt('Member name for the directory?')||'';
+    name=String(name).trim();
+    if(!name){ toast('A name is required.'); return; }
+    state.directory.push({id:Date.now()+Math.random(),name:name,photo:photo});
+    renderDirectory(); renderCropPicker(); scheduleSave(); toast(name+' saved to directory.');
+    return;
+  }
+  if(a==='dirDelete'){
+    state.directory=state.directory.filter(m=>String(m.id)!==String(btn.dataset.id));
+    renderDirectory(); renderCropPicker(); scheduleSave(); return;
+  }
+  if(a==='dirAssign'){
+    const m=state.directory.find(x=>String(x.id)===String(btn.dataset.id));
+    if(!m) return;
+    const target=document.querySelector('[data-action="pick"]')?document.querySelector('[data-action="pick"]').dataset.path:null;
+    if(!target){ toast('Open a role slot and tap Pick Member first.'); return; }
+    const o=cropObj(target);
+    if(o){ o.photo=m.photo; o.name=m.name; }
+    buildModeFields(); render(); scheduleSave(); toast(m.name+' assigned.');
+    return;
+  }
+  if(a==='resetAll'){
+    if(!confirm('Reset all flyer details, photos and saved members?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    state=defaults(); imgCache.clear();
+    buildModeTabs(); buildSharedFields(); buildModeFields(); renderDirectory(); syncAppLogo(); render();
+    toast('Everything reset to defaults.');
+    return;
+  }
+  if(a==='download'){
+    try{
+      if(document.fonts && document.fonts.ready) await document.fonts.ready;
+      render();
+      const link=document.createElement('a');
+      link.download=state.mode+'-flyer-1536.png';
+      link.href=canvas.toDataURL('image/png');
+      document.body.appendChild(link); link.click(); link.remove();
+      toast('PNG downloaded (1536 × 1536).');
+    }catch(err){ toast('Download failed — try uploading photos directly instead of using URLs.'); }
+  }
+});
+
+/* crop canvas: drag to pan, two-finger pinch to zoom */
+let cropDrag=null, cropPinch=null;
+function initCropCanvas(){
+  cropCanvas.addEventListener('pointerdown', e=>{
+    if(!draft) return;
+    cropDrag={sx:e.clientX,sy:e.clientY,cx:draft.crop.x||0,cy:draft.crop.y||0};
+    cropCanvas.setPointerCapture(e.pointerId);
+    cropCanvas.style.cursor='grabbing';
+  });
+  cropCanvas.addEventListener('pointermove', e=>{
+    if(!cropDrag||!draft) return;
+    const rect=cropCanvas.getBoundingClientRect();
+    draft.crop.x=Math.max(-.5,Math.min(.5,cropDrag.cx+(e.clientX-cropDrag.sx)/rect.width));
+    draft.crop.y=Math.max(-.5,Math.min(.5,cropDrag.cy+(e.clientY-cropDrag.sy)/rect.height));
+    syncCropControls(); drawCropPreview();
+  });
+  const end=()=>{cropDrag=null;cropCanvas.style.cursor='grab';};
+  cropCanvas.addEventListener('pointerup',end);
+  cropCanvas.addEventListener('pointercancel',end);
+  cropCanvas.addEventListener('touchstart',e=>{
+    if(e.touches.length===2 && draft){
+      cropPinch={d:Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY),z:draft.crop.zoom||1};
+    }
+  },{passive:true});
+  cropCanvas.addEventListener('touchmove',e=>{
+    if(!cropPinch||!draft||e.touches.length!==2) return;
+    e.preventDefault();
+    const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    draft.crop.zoom=Math.max(1,Math.min(3,cropPinch.z*d/cropPinch.d));
+    syncCropControls(); drawCropPreview();
+  },{passive:false});
+  cropCanvas.addEventListener('touchend',()=>{cropPinch=null;});
+  cropCanvas.addEventListener('touchcancel',()=>{cropPinch=null;});
+}
+
+/* ---------------- start ---------------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  canvas=document.getElementById('flyerCanvas');
+  ctx=canvas.getContext('2d');
+  cropCanvas=document.getElementById('cropCanvas');
+  cropCtx=cropCanvas.getContext('2d');
+  loadState();
+  buildModeTabs();
+  buildSharedFields();
+  buildModeFields();
+  renderDirectory();
+  syncAppLogo();
+  initCropCanvas();
+  render();
+  // Some browsers restore old form values after load; re-apply the contact
+  // migration once that restoration has finished.
+  if(migrateContact){
+    setTimeout(()=>{
+      if(state.contact===OLD_CONTACT){
+        state.contact=defaults().contact;
+        document.getElementById('contact').value=state.contact;
+        render(); scheduleSave();
+      }
+      migrateContact=false;
+    },400);
+  }
+  if(document.fonts && document.fonts.ready){
+    Promise.all([
+      document.fonts.load('800 48px Montserrat'),
+      document.fonts.load('900 48px Montserrat'),
+      document.fonts.load('400 28px "Source Sans 3"'),
+      document.fonts.load('700 28px "Source Sans 3"')
+    ]).then(()=>render()).catch(()=>{});
+  }
+});
+</script>
+</body>
+</html>
