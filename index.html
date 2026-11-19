@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="TM Flyer Studio">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Toastmasters Club Flyer Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +36,7 @@
     font-family:'Source Sans 3',Arial,sans-serif;
     background:var(--cream);
     color:var(--ink);
-    padding-bottom:84px;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));
   }
   button,input,textarea,select{font-family:inherit;}
   button{cursor:pointer;}
@@ -460,6 +461,26 @@ function saveFlyerPng(dataUrl, filename){
     window.AndroidFlyer.savePng(String(dataUrl).split(',')[1]||'', filename);
     return true;
   }catch(e){ return false; }
+}
+async function downloadCanvasPng(filename){
+  // iOS Safari ignores the download attribute on data: URLs, so use a Blob URL.
+  if(window.Blob && window.URL && URL.createObjectURL && canvas.toBlob){
+    try{
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+      if(blob){
+        const url=URL.createObjectURL(blob);
+        const link=document.createElement('a');
+        link.download=filename; link.href=url;
+        document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),10000);
+        return true;
+      }
+    }catch(e){}
+  }
+  const link=document.createElement('a');
+  link.download=filename; link.href=canvas.toDataURL('image/png');
+  document.body.appendChild(link); link.click(); link.remove();
+  return true;
 }
 function scheduleSave(){
   clearTimeout(saveTimer);
@@ -1369,14 +1390,12 @@ document.addEventListener('click', async e=>{
     try{
       if(document.fonts && document.fonts.ready) await document.fonts.ready;
       render();
-      const dataUrl=canvas.toDataURL('image/png');
-      if(saveFlyerPng(dataUrl, state.mode+'-flyer-1536.png')){
+      const filename=state.mode+'-flyer-1536.png';
+      if(isNativeApp()){
+        saveFlyerPng(canvas.toDataURL('image/png'), filename);
         toast('PNG saved to your Photos / gallery.');
       }else{
-        const link=document.createElement('a');
-        link.download=state.mode+'-flyer-1536.png';
-        link.href=dataUrl;
-        document.body.appendChild(link); link.click(); link.remove();
+        await downloadCanvasPng(filename);
         toast('PNG downloaded (1536 × 1536).');
       }
     }catch(err){ toast('Download failed — try uploading photos directly instead of using URLs.'); }
